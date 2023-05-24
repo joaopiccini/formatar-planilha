@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Envio de Planilha</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 16px;
+    }
+
+    h1 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    input[type="file"] {
+      margin-bottom: 16px;
+    }
+
+    button {
+      padding: 8px 16px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Envio de Planilha</h1>
+  <form id="formPlanilha">
+    <input type="file" accept=".csv" id="inputPlanilha" required>
+    <br>
+    <button type="button" onclick="enviarRequisicao()">Enviar</button>
+  </form>
+  <script>
+    // Função para enviar a requisição POST
+    function enviarRequisicao() {
+      var arquivo = document.getElementById('inputPlanilha').files[0];
+
+      // Cria um objeto FormData para enviar o arquivo
+      var formData = new FormData();
+      formData.append('planilha', arquivo);
+
+      fetch('http://localhost:3000/planilha', {
+        method: 'POST',
+        body: formData
+      })
+        .then(response => {
+          if (response.ok) {
+            return response.blob();
+          } else {
+            throw new Error('Erro na requisição');
+          }
+        })
+        .then(blob => {
+          // Cria um link temporário para download
+          var url = window.URL.createObjectURL(blob);
+          var link = document.createElement('a');
+          link.href = url;
+          link.download = 'planilha_resultado.csv';
+
+          // Adiciona o link ao documento e simula o clique
+          document.body.appendChild(link);
+          link.click();
+
+          // Remove o link temporário
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        })
+        .catch(error => {
+          console.error('Erro:', error);
+        });
+    }
+  </script>
+</body>
+</html>
