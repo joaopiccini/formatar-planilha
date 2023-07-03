@@ -17,6 +17,10 @@ app.listen(port, () => {
   console.log(`Servidor escutando na porta ${port}`);
 });
 
+app.get('/', (req, res) => {
+    res.render('index')
+})
+
 app.post('/planilha', upload.single('planilha'), (req, res) => {
   const inputFile = req.file;
 
